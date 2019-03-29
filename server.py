@@ -38,23 +38,28 @@ class Receiver():
 
         def receiveFile(self):
                 sock = socket(AF_INET, SOCK_DGRAM)
-                file = open(self.dir+"/recebido2.txt","wb")
+                sock.bind((self.ip,self.port))
                 print("Inicio recebimento")
                 data, addr = sock.recvfrom(BUFFER)
-                n = int.from_bytes(data, byteorder='big')
+                # n = int.from_bytes(data, byteorder='big')
+                n = int(data.decode())
                 # while True:
                 print(str(range(n)))
-                for i in range(n):
+                dataWrite = bytes(0)
+                for i in range(n+1):
                         # print("Teste")
                         data, addr = sock.recvfrom(BUFFER)
-                        print("Recebido: " + data)
+                        print("Recebido: " + str(data))
                         # packet = Pacote(data[0:BUFFER],data[BUFFER:BUFFER+4])
                         # print("Tipo pacote: " + type(packet))
                         # if packet.ack == -1:
                         #         break
-                        file.write(data)
+                        dataWrite = dataWrite + data
                         # sock.sendto(ack(self.ip,self.port))
-                
+                print("Fim recebimento")
+                print("Gravando em "+ self.dir)
+                file = open(self.dir+"/recebido2.txt","wb")
+                file.write(dataWrite)
                 file.close()
                 sock.close()
 
@@ -62,12 +67,12 @@ class Receiver():
 def close():
         window.quit()
 
-receiver = Receiver("127.0.0.1", 6060)
+receiver = Receiver("127.0.0.1", 6061)
 
 BUFFER = 20
 
 window = Tk()
-window.title("Troca de arquivos")
+window.title("Sender")
 window.geometry("300x300")
 selectFileButton = Button(window, text="Selecionar diretorio", command=receiver.setDirectory)
 closeButton = Button(window, text="Fechar", command=close)

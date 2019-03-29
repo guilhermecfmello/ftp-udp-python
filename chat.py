@@ -50,7 +50,7 @@ class Sender:
    
     def sendFile(self):
         sock = socket(AF_INET, SOCK_DGRAM)
-        sock.bind((self.ip,self.port))
+        # sock.bind((self.ip,self.port))
         file = open(self.filename, "rb")
         data = file.read()
 
@@ -59,14 +59,17 @@ class Sender:
 
         print("Tamanho: " + str(len(data)))
             # while True:
-        sock.sendto(bytes(n), (self.ip,self.port))
+        b = str(n).encode()
+        sock.sendto(b, (self.ip,self.port))
         print("Range: " + str(range(n+1)))
+        print("Em bytes: " +  b.decode())
         for i in range(n+1):
             print("Entrou: " + str(i))
             packet = data[i*self.buffer:(i+1)*self.buffer]
             # packet = Pacote(self.partOfData(dataString, i), i)
             # data = self.partOfData(dataString,i)
             # while True:
+            print("Enviando: " + str(packet))
             sock.sendto(packet,(self.ip,self.port))
                 # print("pau tora")
                 # if sock.recvfrom(self.buffer) == packet.ack:
@@ -100,7 +103,7 @@ BUFFER = 20
 
 sender = Sender()
 sender.set_ip("127.0.0.1")
-sender.set_port(6060)
+sender.set_port(6061)
 
 window = Tk()
 window.title("Troca de arquivos")
